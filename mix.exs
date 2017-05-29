@@ -63,4 +63,10 @@ defmodule OrderedSiblings.Mixfile do
       links: %{"GitHub" => "https://github.com/Qqwy/elixir_ordered_siblings" }
     ]
   end
+
+  defp description do
+    """
+    Ordered siblings in Ecto: Order and reorder comments in threads, songs in playlists, images in albums, etc.
+    """
+  end
 end
