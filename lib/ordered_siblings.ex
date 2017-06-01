@@ -40,12 +40,12 @@ defmodule OrderedSiblings do
   end
 
   def movement_query(scope, start_pos, end_pos) when start_pos < end_pos do
-    length = end_pos - start_pos
-    from(p in scope, where: p.order >= ^start_pos and p.order <= ^end_pos, update: [set: [order: fragment("? + (? - ? - 1 + ?) % ? ", ^start_pos, p.order, ^end_pos, ^length, ^length)]])
+    length = end_pos - start_pos + 1
+    from(p in scope, where: p.order >= ^start_pos and p.order <= ^end_pos, update: [set: [order: fragment("? + (? - ? - 1 + ?) % ? ", ^start_pos, p.order, ^start_pos, ^length, ^length)]])
   end
 
   def movement_query(scope, start_pos, end_pos) do
-    length = start_pos - end_pos
-    from(p in scope, where: p.order >= ^end_pos and p.order <= ^start_pos, update: [set: [order: fragment("? + (? - ? + 1 + ?) % ? ", ^end_pos, p.order, ^start_pos, ^length, ^length)]])
+    length = start_pos - end_pos + 1
+    from(p in scope, where: p.order >= ^end_pos and p.order <= ^start_pos, update: [set: [order: fragment("? + (? - ? + 1 + ?) % ? ", ^end_pos, p.order, ^end_pos, ^length, ^length)]])
   end
 end
