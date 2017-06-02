@@ -49,7 +49,7 @@ defmodule OrderedSiblingsTest do
     |> Repo.transaction
 
     moved_post_five = Repo.one(from(p in Post, where: p.content ==  "post 5"))
-    assert post_five.position == 2
+    assert moved_post_five.position == 2
 
     # Structs between position 5 and 2 have moved one position up.
     post_four = Repo.one(from(p in Post, where: p.content ==  "post 4"))
