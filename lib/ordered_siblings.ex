@@ -36,7 +36,7 @@ defmodule OrderedSiblings do
     current_position = Ecto.Changeset.get_field(changeset, :position)
 
     Ecto.Multi.new
-    |> Ecto.Multi.update_all(movement_query(scope, current_position, new_position), [])
+    |> Ecto.Multi.update_all(:moved_siblings, movement_query(scope, current_position, new_position), [])
   end
 
   @doc """

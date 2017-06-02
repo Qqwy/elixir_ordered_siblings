@@ -38,14 +38,14 @@ defmodule OrderedSiblingsTest do
     thread = insert_thread()
     for index <- (10..0) do
       %Post{content: "post #{index}"}
-      |> insert_post()
+      |> (fn post -> insert_post(thread, post) end).()
     end
 
     post_five = Repo.one(from(p in Post, where: p.content ==  "post 5"))
 
     assert post_five.position == 5
 
-    OrderedSiblings.move(post_five, 2)
+    OrderedSiblings.move(post_five, post_scope(thread.id), 2)
     |> Repo.transaction
 
     moved_post_five = Repo.one(from(p in Post, where: p.content ==  "post 5"))
@@ -68,7 +68,7 @@ defmodule OrderedSiblingsTest do
   defp insert_post(thread, post \\ %Post{}) do
     {:ok, %{inserted_sibling: post}} =
       post
-      |> Map.put_in(:thread_id, thread.id)
+      |> Map.put(:thread_id, thread.id)
       |> OrderedSiblings.add_to_front(post_scope(thread.id))
       |> Repo.transaction
     post
