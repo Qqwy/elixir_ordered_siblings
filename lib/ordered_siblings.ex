@@ -31,7 +31,8 @@ defmodule OrderedSiblings do
   with a UNIQUE constraint (on `[your_scope, :position]`), which means
   that no race conditions (where two rows in your scope will end up with the same position) can occur, regardless of the transaction isolation level that you have configured for your database.
   """
-  def move(changeset, scope, new_position, options \\ []) do
+  def move(changeset_or_struct, scope, new_position, options \\ []) do
+    changeset = Ecto.Changeset.change(changeset_or_struct)
     current_position = Ecto.Changeset.get_field(changeset, :position)
 
     Ecto.Multi.new
