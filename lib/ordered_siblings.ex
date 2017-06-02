@@ -17,7 +17,7 @@ defmodule OrderedSiblings do
 
     Ecto.Multi.new
     |> increment_siblings_order(scope)
-    |> Ecto.Multi.insert(prepared_changeset)
+    |> Ecto.Multi.insert(:inserted_sibling, prepared_changeset)
   end
 
   @doc """
@@ -48,19 +48,19 @@ defmodule OrderedSiblings do
     later_siblings = from(p in scope, where: p.position > ^position)
 
     Ecto.Multi.new
-    |> Ecto.Multi.delete(:remove_required_sibling, changeset)
-    |> Ecto.Multi.update_all(:decrement_later_siblings, later_siblings, inc: [position: -1])
+    |> Ecto.Multi.delete(:removed_sibling, changeset)
+    |> Ecto.Multi.update_all(:decremented_higher_siblings, later_siblings, inc: [position: -1])
   end
 
   # TODO configurable 'order' column name.
   def increment_siblings_order(ecto_multi, scope) do
     ecto_multi
-    |> Ecto.Multi.update_all(:increment_siblings_order, scope, inc: [position: 1])
+    |> Ecto.Multi.update_all(:incremented_siblings, scope, inc: [position: 1])
   end
 
   def decrement_siblings_order(ecto_multi, scope) do
     ecto_multi
-    |> Ecto.Multi.update_all(:decrement_siblings_order, scope, inc: [position: -1])
+    |> Ecto.Multi.update_all(:decremented_siblings, scope, inc: [position: -1])
   end
 
   defp movement_query(scope, start_pos, end_pos) when start_pos < end_pos do
