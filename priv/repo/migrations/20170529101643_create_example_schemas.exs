@@ -9,8 +9,8 @@ defmodule OrderedSiblings.Repo.Migrations.CreateExampleSchemas do
     create table(:posts) do
       add :thread_id, references(:threads)
       add :content, :text
-      add :order, :integer, null: false, default: -1
+      add :position, :integer, null: false, default: 0
     end
-    create index(:posts, [:thread_id, :order])
+    create unique_index(:posts, [:thread_id, :position])
   end
 end

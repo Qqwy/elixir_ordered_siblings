@@ -14,6 +14,6 @@ defmodule Post do
   schema "posts" do
     belongs_to :thread, Thread
     field :content, :string
-    field :order, :integer
+    field :position, :integer
   end
 end

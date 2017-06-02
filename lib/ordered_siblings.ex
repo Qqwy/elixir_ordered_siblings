@@ -9,9 +9,10 @@ defmodule OrderedSiblings do
   Pushes the given changeset to position `0` of the siblings indicated by 'scope',
   by incrementing all siblings' positions by one before inserting.
   """
-  def add_to_front(changeset, scope, options \\ []) do
+  def add_to_front(changeset_or_struct, scope, options \\ []) do
     prepared_changeset =
-      changeset
+      changeset_or_struct
+      |> Ecto.Changeset.change()
       |> Ecto.Changeset.put_change(:position, 0)
 
     Ecto.Multi.new
@@ -31,7 +32,7 @@ defmodule OrderedSiblings do
   that no race conditions (where two rows in your scope will end up with the same position) can occur, regardless of the transaction isolation level that you have configured for your database.
   """
   def move(changeset, scope, new_position, options \\ []) do
-    current_position = Ecto.Changeset.get_field(changeset, position)
+    current_position = Ecto.Changeset.get_field(changeset, :position)
 
     Ecto.Multi.new
     |> Ecto.Multi.update_all(movement_query(scope, current_position, new_position), [])
