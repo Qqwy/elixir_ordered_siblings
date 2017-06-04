@@ -11,6 +11,6 @@ defmodule OrderedSiblings.Repo.Migrations.CreateExampleSchemas do
       add :content, :text
       add :position, :integer, null: false, default: 0
     end
-    # create unique_index(:posts, [:thread_id, :position])
+    create unique_index(:posts, [:thread_id, :position])
   end
 end

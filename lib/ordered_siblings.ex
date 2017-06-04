@@ -35,8 +35,26 @@ defmodule OrderedSiblings do
     changeset = Ecto.Changeset.change(changeset_or_struct)
     current_position = Ecto.Changeset.get_field(changeset, :position)
 
+    {movement_scope, negative_movement_scope} = movement_queries(current_position, new_position)
+
     Ecto.Multi.new
-    |> Ecto.Multi.update_all(:moved_siblings, movement_query(scope, current_position, new_position), [])
+    # |> Ecto.Multi.update_all(:moved_siblings, movement_query(scope, current_position, new_position), [])
+    |> Ecto.Multi.update_all(:moving_siblings_1, from(p in movement_scope, update: [set: [position: fragment("- (? + 1)", p.position)]]), [])
+    |> Ecto.Multi.update(:moving_current_sibling, changeset_with_move(changeset))
+    |> Ecto.Multi.update_all(:moving_siblings_2, from(p in negative_movement_scope, update: [set: [position: fragment("abs(?)", p.position)]]), [])
+  end
+
+  defp changeset_with_move(changeset) do
+    changeset
+    |> Ecto.Changeset.put_change(:position, new_position)
+  end
+
+  defp movement_queries(current_position, end_position) do
+    max_pos = max(current_position, new_position)
+    min_pos = min(current_position, new_position)
+    movement_scope = from(p in scope, where: p.position >= ^min_pos and p.position <= ^max_pos)
+    negative_movement_scope = from(p in scope, where: p.position >= ^(-max_pos) and p.position <= ^(-min_pos))
+    {movement_scope, negative_movement_scope}
   end
 
   @doc """
@@ -63,6 +81,7 @@ defmodule OrderedSiblings do
     ecto_multi
     |> Ecto.Multi.update_all(:decremented_siblings, scope, inc: [position: -1])
   end
+
 
   defp movement_query(scope, start_pos, end_pos) when start_pos < end_pos do
     length = end_pos - start_pos + 1
