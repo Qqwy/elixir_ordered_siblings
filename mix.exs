@@ -37,7 +37,7 @@ defmodule OrderedSiblings.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:ecto, "~> 2.0"},
+      {:ecto, "~> 3.1"},
       {:postgrex, "~> 0.13"},
       {:poison, "~> 3.1"},
 
