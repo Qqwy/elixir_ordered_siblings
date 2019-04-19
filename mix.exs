@@ -39,7 +39,7 @@ defmodule OrderedSiblings.Mixfile do
     [
       {:ecto, "~> 3.1"},
       {:postgrex, "~> 0.13"},
-      {:poison, "~> 3.1"},
+      {:poison, "~> 4.0"},
 
       {:ex_doc, ">= 0.0.0", only: :dev}
     ]
